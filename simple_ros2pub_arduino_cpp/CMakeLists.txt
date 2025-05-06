@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(simple_ros2pub_arduino_cpp)
+project(simple_ros2pubsub_arduino_cpp)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -13,13 +13,19 @@ find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(SERIAL libserial)
 
-add_executable(simple_ros2pub_arduino_cpp src/simple_ros2pub_arduino_cpp.cpp)
+add_executable(simple_ros2pub_arduino_cpp src/simple_serial_transmitter.cpp)
 ament_target_dependencies(simple_ros2pub_arduino_cpp rclcpp std_msgs)
-target_include_directories(simple_ros2pub_arduino_cpp PUBLIC "${SERIAL_INCLUDE_DIRS}" )
-target_link_libraries(simple_ros2pub_arduino_cpp "${SERIAL_LDFLAGS}")
+target_include_directories(simple_ros2pub_arduino_cpp PUBLIC /usr/include/libserial/)
+target_link_libraries(simple_ros2pub_arduino_cpp /usr/lib/x86_64-linux-gnu/libserial.so)
+
+add_executable(simple_ros2sub_arduino_cpp src/simple_serial_receiver.cpp)
+ament_target_dependencies(simple_ros2sub_arduino_cpp rclcpp std_msgs)
+target_include_directories(simple_ros2sub_arduino_cpp PUBLIC /usr/include/libserial/)
+target_link_libraries(simple_ros2sub_arduino_cpp /usr/lib/x86_64-linux-gnu/libserial.so)
 
 install(TARGETS
   simple_ros2pub_arduino_cpp
+  simple_ros2sub_arduino_cpp
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
